@@ -163,9 +163,14 @@ public class ComplexExamples {
      *
      * @param subtext - subtext to check
      * @param text - text to check
-     * @return result of fuzzy search of subtext in text
+     * @return result of fuzzy search of subtext in text, false if null is anywhere
      */
     public static boolean fuzzySearch(String subtext, String text) {
+        if(subtext == null || text == null) {
+            System.out.println(false);
+            return false;
+        }
+
         StringBuilder sb = new StringBuilder(".*");
         for (int i = 0; i < subtext.length(); i++) {
             sb.append("\\Q");
@@ -217,6 +222,7 @@ public class ComplexExamples {
         assertion(fuzzySearch("cartwheel", "cartwheel"), true);
         assertion(fuzzySearch("cwheeel", "cartwheel"), false);
         assertion(fuzzySearch("lw", "cartwheel"), false);
+        assertion(fuzzySearch("lw", null), false);
 
         /*
         Task1
