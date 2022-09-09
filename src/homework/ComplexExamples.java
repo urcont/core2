@@ -97,9 +97,8 @@ public class ComplexExamples {
         Arrays.stream(RAW_DATA)
                 .filter(Objects::nonNull)
                 .distinct()
-                .sorted(Comparator.comparing(Person::getName))
                 .sorted(Comparator.comparingInt(Person::getId))
-                .collect(groupingBy(Person::getName, mapping(Person::getId, toList())))
+                .collect(groupingBy(Person::getName, TreeMap::new, mapping(Person::getId, toList())))
                 .forEach((personName, personIdList) -> {
                     int i = 0;
                     System.out.println(personName);
@@ -121,9 +120,7 @@ public class ComplexExamples {
         Arrays.stream(RAW_DATA)
                 .filter(Objects::nonNull)
                 .distinct()
-                .sorted(Comparator.comparing(Person::getName))
-                .sorted(Comparator.comparingInt(Person::getId))
-                .collect(groupingBy(Person::getName, counting()))
+                .collect(groupingBy(Person::getName, TreeMap::new, counting()))
                 .forEach((personName, personIdCount) ->
                         System.out.printf("Key: %s\nValue:%d\n", personName, personIdCount)
                 );
