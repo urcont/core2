@@ -163,20 +163,34 @@ public class ComplexExamples {
      * @return result of fuzzy search of subtext in text, false if null is anywhere
      */
     public static boolean fuzzySearch(String subtext, String text) {
-        if(subtext == null || text == null) {
+        if((subtext == null) || (text == null)) {
             System.out.println(false);
             return false;
         }
 
-        StringBuilder sb = new StringBuilder(".*");
-        for (int i = 0; i < subtext.length(); i++) {
-            sb.append("\\Q");
-            sb.append(subtext.charAt(i));
-            sb.append("\\E.*");
+        int subtextLen = subtext.length();
+        int textLen = text.length();
+        if(subtextLen > textLen) {
+            System.out.println(false);
+            return false;
         }
 
-        System.out.println(text.matches(sb.toString()));
-        return text.matches(sb.toString());
+        int subtextPos = 0;
+        char ch = subtext.charAt(subtextPos);
+        for (int i = 0; i < textLen; i++) {
+            if(ch == text.charAt(i)) {
+                subtextPos++;
+                if(subtextPos == subtextLen) {
+                    System.out.println(true);
+                    return true;
+                }
+
+                ch = subtext.charAt(subtextPos);
+            }
+        }
+
+        System.out.println(false);
+        return false;
     }
 
     public static void assertion(String factdata, String testdata) {
