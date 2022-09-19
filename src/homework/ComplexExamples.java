@@ -1,12 +1,8 @@
 package homework;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.*;
 
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 
 public class ComplexExamples {
 
@@ -89,6 +85,121 @@ public class ComplexExamples {
         1 - Jack (4)
      */
 
+    /**
+     * prints the result of task1 (english variation)
+     */
+    public static void task1Eng() {
+        if (RAW_DATA == null) {
+            System.out.println("RAW_DATA must be not null");
+            return;
+        }
+
+        Arrays.stream(RAW_DATA)
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted(Comparator.comparingInt(Person::getId))
+                .collect(groupingBy(Person::getName, TreeMap::new, mapping(Person::getId, toList())))
+                .forEach((personName, personIdList) -> {
+                    int i = 0;
+                    System.out.println(personName);
+                    for (var personId:personIdList) {
+                        System.out.printf("%d - %s (%d)\n", ++i, personName, personId);
+                    }
+                });
+    }
+
+    /**
+     * prints the result of task1 (russian variation)
+     */
+    public static void task1Rus() {
+        if (RAW_DATA == null) {
+            System.out.println("RAW_DATA must be not null");
+            return;
+        }
+
+        Arrays.stream(RAW_DATA)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(groupingBy(Person::getName, TreeMap::new, counting()))
+                .forEach((personName, personIdCount) ->
+                        System.out.printf("Key: %s\nValue:%d\n", personName, personIdCount)
+                );
+    }
+
+    /**
+     *
+     * @param array - array to be checked
+     * @param sum - exact sum of 2 elements
+     * @return string in format "[1, 2]" or empty string
+     */
+    public static String arrayFirstSumOfTwoCheck(int[] array, int sum) {
+        System.out.printf("%s, %d -> ", Arrays.toString(array), sum);
+        String res = "";
+
+        if(array == null) {
+            System.out.println("There is no result");
+            return res;
+        }
+
+        Set<Integer> set = new HashSet<>();
+        int len = array.length;
+        for (int j : array) {
+            if (set.contains(sum - j)) {
+                res = String.format("[%d, %d]", sum - j, j);
+                System.out.println(res);
+                return res;
+            }
+            set.add(j);
+        }
+
+        System.out.println("There is no result");
+        return res;
+    }
+
+    /**
+     *
+     * @param subtext - subtext to check
+     * @param text - text to check
+     * @return result of fuzzy search of subtext in text, false if null is anywhere
+     */
+    public static boolean fuzzySearch(String subtext, String text) {
+        if((subtext == null) || (text == null)) {
+            System.out.println(false);
+            return false;
+        }
+
+        int subtextLen = subtext.length();
+        int textLen = text.length();
+        if(subtextLen > textLen) {
+            System.out.println(false);
+            return false;
+        }
+
+        int subtextPos = 0;
+        char ch = subtext.charAt(subtextPos);
+        for (int i = 0; i < textLen; i++) {
+            if(ch == text.charAt(i)) {
+                subtextPos++;
+                if(subtextPos == subtextLen) {
+                    System.out.println(true);
+                    return true;
+                }
+
+                ch = subtext.charAt(subtextPos);
+            }
+        }
+
+        System.out.println(false);
+        return false;
+    }
+
+    public static void assertion(String factdata, String testdata) {
+        assert testdata.equals(factdata) : String.format("Expected: %s, in fact: %s", testdata, factdata);
+    }
+
+    public static void assertion(boolean factdata, boolean testdata) {
+        assert testdata == factdata : String.format("Expected: %s, in fact: %s", testdata, factdata);
+    }
     public static void main(String[] args) {
         System.out.println("Raw data:");
         System.out.println();
@@ -103,10 +214,30 @@ public class ComplexExamples {
         System.out.println("Duplicate filtered, grouped by name, sorted by name and id:");
         System.out.println();
 
+        //Duplicate filtered, grouped by name, sorted by name and id:
+        task1Eng();
+        System.out.println("**************************************************");
+        //Убрать дубликаты, отсортировать по идентификатору, сгруппировать по имени
+        task1Rus();
+        System.out.println("**************************************************");
+
+        //[3, 4, 2, 7], 10 -> [3, 7] - вывести пару менно в скобках, которые дают сумму - 10
+        assertion(arrayFirstSumOfTwoCheck(new int[] {3, 4, 2, 7, 6}, 10), "[3, 7]");
+        assertion(arrayFirstSumOfTwoCheck(new int[] {3, 4, 2, 7, 6}, 11), "[4, 7]");
+        System.out.println("**************************************************");
+
+        //Реализовать функцию нечеткого поиска
+        assertion(fuzzySearch("car", "ca6$$#_rtwheel"), true);
+        assertion(fuzzySearch("cwhl", "cartwheel"), true);
+        assertion(fuzzySearch("c\\whee", "car\\twheel"), true);
+        assertion(fuzzySearch("cartwheel", "cartwheel"), true);
+        assertion(fuzzySearch("cwheeel", "cartwheel"), false);
+        assertion(fuzzySearch("lw", "cartwheel"), false);
+        assertion(fuzzySearch("lw", null), false);
+
         /*
         Task1
             Убрать дубликаты, отсортировать по идентификатору, сгруппировать по имени
-
             Что должно получиться
                 Key:Amelia
                 Value:4
@@ -118,15 +249,10 @@ public class ComplexExamples {
                 Value:1
          */
 
-
-
         /*
         Task2
-
             [3, 4, 2, 7], 10 -> [3, 7] - вывести пару менно в скобках, которые дают сумму - 10
          */
-
-
 
         /*
         Task3
